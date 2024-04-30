@@ -96,7 +96,7 @@ def open_dataset(
     grid_filename_or_obj: Union[
         str, os.PathLike, xr.DataArray, np.ndarray, list, tuple, dict
     ],
-    filename_or_obj: str,
+    filename_or_obj: Union[str, xr.Dataset],
     latlon: Optional[bool] = False,
     use_dual: Optional[bool] = False,
     grid_kwargs: Optional[Dict[str, Any]] = {},
@@ -166,7 +166,10 @@ def open_dataset(
     )
 
     # UxDataset
-    ds = xr.open_dataset(filename_or_obj, **kwargs)  # type: ignore
+    if isinstance(filename_or_obj, xr.Dataset):
+        ds = filename_or_obj
+    else:
+        ds = xr.open_dataset(filename_or_obj, **kwargs)  # type: ignore
 
     # map each dimension to its UGRID equivalent
     ds = _map_dims_to_ugrid(ds, uxgrid._source_dims_dict, uxgrid)
