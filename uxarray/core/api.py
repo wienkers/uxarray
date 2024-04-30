@@ -94,7 +94,7 @@ def open_grid(
 
 def open_dataset(
     grid_filename_or_obj: Union[
-        str, os.PathLike, xr.DataArray, np.ndarray, list, tuple, dict
+        str, os.PathLike, xr.DataArray, Grid, np.ndarray, list, tuple, dict
     ],
     filename_or_obj: Union[str, xr.Dataset],
     latlon: Optional[bool] = False,
@@ -161,9 +161,12 @@ def open_dataset(
         )
 
     # Grid definition
-    uxgrid = open_grid(
-        grid_filename_or_obj, latlon=latlon, use_dual=use_dual, **grid_kwargs
-    )
+    if isinstance(grid_filename_or_obj, Grid):
+        uxgrid = grid_filename_or_obj
+    else:
+        uxgrid = open_grid(
+            grid_filename_or_obj, latlon=latlon, use_dual=use_dual, **grid_kwargs
+        )
 
     # UxDataset
     if isinstance(filename_or_obj, xr.Dataset):
